@@ -112,6 +112,8 @@ ___
         ```json
         "exists": false
         ```
+<br>
+
 ___
 
 ## Post request (create)
