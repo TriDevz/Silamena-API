@@ -2,26 +2,26 @@
 
 - [Words]
     - [Get requests]
-    - [Post request]
-    - [Put request]
-    - [Delete request]
+    - [Post requests]
+    - [Put requests]
+    - [Delete requests]
 - [Examples]
-    - [Get requests (examples)] 
-    - [Post request (examples)]
-    - [Put request (examples)]
-    - [Delete request (examples)]
+    - [Get requests (examples)]
+    - [Post requests (examples)]
+    - [Put requests (examples)]
+    - [Delete requests (examples)]
 
 
 [Words]: #words
 [Get requests]: #get-requests
-[Post request]: #post-request-create
-[Put request]: #put-request-edit
-[Delete request]: #delete-request-remove
+[Post requests]: #post-requests
+[Put requests]: #put-requests
+[Delete requests]: #delete-requests
 [Examples]: #examples
 [Get requests (examples)]: #get-requests-1
-[Post request (examples)]: #post-request-create-1
-[Put request (examples)]: #put-request-edit-1
-[Delete request (examples)]: #delete-request-remove-1
+[Post requests (examples)]: #post-requests-1
+[Put requests (examples)]: #put-requests-1
+[Delete requests (examples)]: #delete-requests-1
 
 <br><br>
 
@@ -41,64 +41,32 @@
 >        10. Interjection
 >        11. Other
 - #### English translations
->        All translations should be separated by a comma followed by a space (example, dog, translation)
+>        All translations should be separated by ", " or "/" (example, dog/translation).
 - #### Requests
->       the title of the request cannot contain spaces: by convention the underscores are used
+>       The title of the request cannot contain spaces: by convention the underscores are used.
 <br>
 
 ___
 
 ## Get requests
 - Get all words in alphabetical order (only names)
-    >GET - `/api/word/all`
+  >GET - `/api/words/names`
     - returns
         ```json
-        "wordsList": [
+        "names": [
             "Name 1",
             "Name 2",
             "Name 3",
         ],
-        "wordsCount": 3
+        "count": 3
         ```
 <br>
 
-- Gets an array of words relative to the array of given names
-    >GET - `/api/word`
-    - body:
-        ```json
-        "list": [
-            "Name 1",
-            "Name 2"
-        ]
-        ```
-    - returns:
-        ```json
-        "wordsList": [
-            {
-                "name": "Name 1",
-                "role": 1,
-                "english": "translation",
-                "ethimology": "original/origin...",
-                "description": "This is the name's description...",
-                "synonyms": ""
-            },
-            {
-                "name": "Name 2",
-                "role": 2,
-                "english": "translation",
-                "ethimology": "original/origin...",
-                "description": "This is the name's description...",
-                "synonyms": ""
-            }
-        ]
-        ```
-<br>
-
-- Gets all the silamena words given an english one (only names)
-    >GET - `/api/word/` `{english-word}`
+- Get all the silamena words'names that can be translated to a given english word
+  >GET - `/api/words/from_english/` `{english-word}`
     - returns
         ```json
-        "wordsList": [
+        "names": [
             "Option 1",
             "Option 2",
             "Option 3",
@@ -106,8 +74,8 @@ ___
         ```
 <br>
 
-- Finds if an english word has a silamena translation
-    >GET - `/api/word/exists` `{english-word}`
+- Check if an english word can have a silamena translation
+  >GET - `/api/words/english_exists/` `{english-word}`
     - returns
         ```json
         "exists": false
@@ -116,32 +84,64 @@ ___
 
 ___
 
-## Post request (create)
-- Create a word
-    >POST - `/api/word`
-    #### Body:
+## Post requests
+- Add a word
+  >POST - `/api/words/new`
+  #### Body:
     ```json
     "name": "name (string)",
     "role": "categorization (number)",
     "english": "english-translations (string)",
-    "ethimology": "ethimology (string)",
+    "etymology": "etymology (string)",
     "description": "description/explaination (string)",
     "synonyms": "possible synonyms of the word (string)"
     ```
 
 <br>
 
+- Gets an array of words relative to the array of given names
+  >POST - `/api/words/data`
+    - body:
+        ```json
+        "names": [
+            "Name 1",
+            "Name 2"
+        ]
+        ```
+    - returns:
+        ```json
+        "data": [
+            {
+                "name": "Name 1",
+                "role": 1,
+                "english": "translation",
+                "etymology": "original/origin...",
+                "description": "This is the name's description...",
+                "synonyms": ""
+            },
+            {
+                "name": "Name 2",
+                "role": 2,
+                "english": "translation",
+                "etymology": "original/origin...",
+                "description": "This is the name's description...",
+                "synonyms": ""
+            }
+        ]
+        ```
+<br>
+
 ___
 
-## Put request (edit)
+## Put requests
 - Edit a word
-    >PUT - `/api/word/` `{name}`
-    #### Body:
+  >PUT - `/api/words/` `{name}`
+  #### Body:
     ```json
     "name": "new-name",
     "role": "new-role",
     "english": "new-translation",
-    "ethimology": "new-ethimology",
+    "etymology": "new-etymology",
     "description": "new-description",
     "synonyms": "new-synonyms"
     ```
@@ -150,9 +150,9 @@ ___
 
 ___
 
-## Delete request (remove)
+## Delete requests
 - Delete a word
-    >DELETE - `/api/word/` `{name}`
+  >DELETE - `/api/words/` `{name}`
 ___
 
 <br>
@@ -161,11 +161,11 @@ ___
 
 ## Get requests
 - Get a _num_ of random examples (**num is by default 1**)
-    >GET - `/api/example/random` `{?num=num}`
+  >GET - `/api/examples/random` `{?num=num}`
 
     - returns
         ```json
-        "examplesList": [
+        "examples": [
             {
                 "id": 1,
                 "silamena": "Random text",
@@ -176,12 +176,12 @@ ___
 
 <br>
 
-- Get a _num_ of examples given an english expression (**num is by default 3**)
-    >GET - `/api/example/` `{expression}` `[?num=num]`
+- Get a _num_ of examples that contain a given english expression (**num is by default 3**)
+  >GET - `/api/examples/` `{expression}` `[?num=num]`
 
     - returns
         ```json
-        "examplesList": [
+        "examples": [
             {
                 "id": 1,
                 "silamena": "Example 1",
@@ -200,10 +200,10 @@ ___
         ]
         ```
 
-## Post request (create)
+## Post requests
 - Create an example
-    >POST - `/api/example`
-    #### Body:
+  >POST - `/api/examples/new`
+  #### Body:
     ```json
     "silamena": "silamena example (string)",
     "english": "enslish translation (number)"
@@ -213,10 +213,10 @@ ___
 
 ___
 
-## Put request (edit)
+## Put requests
 - Edit an example
-    >PUT - `/api/example/` `{id}`
-    #### Body:
+  >PUT - `/api/examples/` `{id}`
+  #### Body:
     ```json
     "silamena": "new-silamena-example",
     "english": "new-english-translation"
@@ -226,7 +226,7 @@ ___
 
 ___
 
-## Delete request (remove)
+## Delete requests
 - Delete an example
-    >DELETE - `/api/example/` `{id}`
+  >DELETE - `/api/examples/` `{id}`
 ___
