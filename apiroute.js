@@ -18,7 +18,8 @@ router.use(cors())
 
 //Word info
 //Get words list in a page
-router.get('/word/all', async (req, res) => {
+router.get('/words/names', async (req, res) => {
+
     try {
         const wordCount = await model.Word.count();
         const words = await model.Word.findAll({
@@ -26,8 +27,8 @@ router.get('/word/all', async (req, res) => {
             attributes: ['name']
         });
         const data = {
-            wordsList: words.map(word => word.name),
-            wordsCount: wordCount
+            names: words.map(word => word.name),
+            count: wordCount
         }
         res.json(data);
     } catch (error) {
@@ -36,9 +37,9 @@ router.get('/word/all', async (req, res) => {
 });
 
 //Get array of words relative to the array of given names
-router.get('/word', async (req, res) => {
-    const list = req.body.list || [];
-    console.log(list);
+router.post('/words/data', async (req, res) => {
+    const list = req.body.names || [];
+
     try {
         const words = await model.Word.findAll({
           where: {
@@ -48,7 +49,7 @@ router.get('/word', async (req, res) => {
           },
         });
         const data = {
-            wordsList: words
+            data: words
         }
         res.json(data);
     } catch (error) {
@@ -57,7 +58,7 @@ router.get('/word', async (req, res) => {
 });
 
 //Is there a silamena translation
-router.get('/word/exists/:word', async (req, res) => {
+router.get('/words/english_exists/:word', async (req, res) => {
     const word = req.params.word.toLowerCase().replace('_', " ");
     await model.Word.findOne({
         where: {
@@ -85,7 +86,7 @@ router.get('/word/exists/:word', async (req, res) => {
 });
 
 //Get all the silamena words given an english one
-router.get('/word/:inputWord', async (req, res) => {
+router.get('/words/from_english/:inputWord', async (req, res) => {
     const inputWord = req.params.inputWord.toLowerCase().replace("_", " ");
 
     try {
@@ -109,7 +110,7 @@ router.get('/word/:inputWord', async (req, res) => {
             attributes: ['name']
         });
         const data = {
-            wordsList: silamenaWords.map(word => word.name)
+            names: silamenaWords.map(word => word.name)
         }
         res.json(data);
     } catch (error) {
@@ -119,7 +120,7 @@ router.get('/word/:inputWord', async (req, res) => {
 });
 
 //Create word
-router.post('/word', (req, res) => {
+router.post('/words/new', (req, res) => {
     if(req.body.name) {
         let tempword = model.newWord();
         tempword.name = req.body.name;
@@ -137,7 +138,7 @@ router.post('/word', (req, res) => {
 });
 
 //Delete word
-router.delete('/word/:name', (req, res) => {
+router.delete('/words/:name', (req, res) => {
     const param = req.params.name.toLowerCase();
     
     model.Word.findOne({ where: { name: param } }).then(word => {
@@ -153,7 +154,7 @@ router.delete('/word/:name', (req, res) => {
 });
 
 //Update/Edit word
-router.put('/word/:name',  (req, res) => {
+router.put('/words/:name',  (req, res) => {
     const param = req.params.name.toLowerCase();
 
     model.Word.findOne({ where: { name: param } }).then(word => {
@@ -178,14 +179,14 @@ router.put('/word/:name',  (req, res) => {
 
 //Get requests manager
 //Get random example
-router.get('/example/random', async (req, res) => {
+router.get('/examples/random', async (req, res) => {
     const num = req.query.num || 1;
     try {
         const examples = await model.Example.findAll();
         if (examples.length > 0) {
             let result = examples.slice().sort(() => Math.random() - 0.5).slice(0, num);
             let data = {
-                examplesList: result
+                examples: result
             }
             res.json(data);
         } else {
@@ -197,7 +198,7 @@ router.get('/example/random', async (req, res) => {
 });
 
 //Finds 3 expression
-router.get('/example/:expression', async (req, res) => {
+router.get('/examples/:expression', async (req, res) => {
     const expr = req.params.expression.toLowerCase().replace("_", " ");
     const num = req.query.num || 3;
     try {
@@ -211,7 +212,7 @@ router.get('/example/:expression', async (req, res) => {
     
         let result = expressions.slice().sort(() => Math.random() - 0.5).slice(0, num);
         let data = {
-            examplesList: result
+            examples: result
         }
         res.json(data);
     } catch(error) {
@@ -220,7 +221,7 @@ router.get('/example/:expression', async (req, res) => {
 });
 
 //Create example
-router.post('/example', (req, res) => {
+router.post('/examples/new', (req, res) => {
     let tempex = model.newExample();
 
     tempex.silamena = req.body.silamena;
@@ -233,7 +234,7 @@ router.post('/example', (req, res) => {
 });
 
 //Delete example
-router.delete('/example/:id', (req, res) => {
+router.delete('/examples/:id', (req, res) => {
     const param = req.params.id;
     
     model.Example.findOne({ where: { id: param } }).then(example => {
@@ -249,7 +250,7 @@ router.delete('/example/:id', (req, res) => {
 });
 
 //Update/Edit example
-router.put('/example/:id',  (req, res) => {
+router.put('/examples/:id',  (req, res) => {
     const param = req.params.id;
 
     model.Example.findOne({ where: { id: param } }).then(example => {
