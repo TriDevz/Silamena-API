@@ -82,6 +82,28 @@ ___
         ```
 <br>
 
+- Get all words in alphabetical order (only names and english)
+  >GET - `/api/words/all-english/`
+    - returns
+        ```json
+        "names": [
+          {
+            "name": "Heia",
+            "english": "Hi"
+          },
+          {
+            "name": "Ploo",
+            "english": "Water, River, Sea"
+          },
+          {
+            "name": "Dzanta",
+            "english": "Hello"
+          }
+        ],
+        "count": 3
+        ```
+<br>
+
 ___
 
 ## Post requests
