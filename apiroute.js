@@ -17,7 +17,7 @@ router.use(cors())
 //WORDS
 
 //Word info
-//Get words list in a page
+//Get words list in a page (names)
 router.get('/words/names', async (req, res) => {
 
     try {
@@ -84,6 +84,16 @@ router.get('/words/english_exists/:word', async (req, res) => {
         }
     });
 });
+//Get words list in a page (names, roles and english)
+router.get('/words/all-english', async (req, res) => {
+    try {
+        const words = await model.Word.findAll({ attributes: ['name', 'english', 'role'] });
+        res.json(words);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching words');
+    }
+});
 
 //Get all the silamena words given an english one
 router.get('/words/from_english/:inputWord', async (req, res) => {
@@ -126,7 +136,7 @@ router.post('/words/new', (req, res) => {
         tempword.name = req.body.name;
         tempword.role = req.body.role;
         tempword.english = req.body.english;
-        tempword.ethimology = req.body.ethimology;
+        tempword.etymology = req.body.etymology;
         tempword.description = req.body.description;
         tempword.synonyms = req.body.synonyms;
         model.dbaddWord(tempword);
@@ -164,7 +174,7 @@ router.put('/words/:name',  (req, res) => {
         word.name = req.body.name;
         word.role = req.body.role;
         word.english = req.body.english;
-        word.ethimology = req.body.ethimology;
+        word.etymology = req.body.etymology;
         word.description = req.body.description;
         word.synonyms = req.body.synonyms;
         return word.save();

@@ -19,7 +19,7 @@ function Init() {
                 },
                 role: DataTypes.INTEGER,
                 english: DataTypes.STRING,
-                ethimology: DataTypes.STRING,
+                etymology: DataTypes.STRING,
                 description: DataTypes.TEXT,
                 synonyms: DataTypes.STRING,
             },
@@ -97,7 +97,7 @@ async function dbaddWord(wordmetemp) {
             name: wordmetemp.name,
             role: wordmetemp.role,
             english: wordmetemp.english,
-            ethimology: wordmetemp.ethimology,
+            etymology: wordmetemp.etymology,
             description: wordmetemp.description,
             synonyms: wordmetemp.synonyms,
         });
