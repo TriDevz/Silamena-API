@@ -133,9 +133,9 @@ router.get('/words/from_english/:inputWord', async (req, res) => {
 router.post('/words/new', (req, res) => {
     if(req.body.name) {
         let tempword = model.newWord();
-        tempword.name = req.body.name;
+        tempword.name = req.body.name.toLowerCase();
         tempword.role = req.body.role;
-        tempword.english = req.body.english;
+        tempword.english = req.body.english.toLowerCase();
         tempword.etymology = req.body.etymology;
         tempword.description = req.body.description;
         tempword.synonyms = req.body.synonyms;
@@ -165,13 +165,14 @@ router.delete('/words/:name', (req, res) => {
 
 //Update/Edit word
 router.put('/words/:name',  (req, res) => {
+    console.log(req.body)
     const param = req.params.name.toLowerCase();
+    console.log(param)
 
     model.Word.findOne({ where: { name: param } }).then(word => {
         if (!word) {
             return res.status(404).send('Word not found');
         }
-        word.name = req.body.name;
         word.role = req.body.role;
         word.english = req.body.english;
         word.etymology = req.body.etymology;
