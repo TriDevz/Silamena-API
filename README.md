@@ -63,7 +63,31 @@ ___
 <br>
 
 - Get all the silamena words'names that can be translated to a given english word
-  >GET - `/api/words/from_english/` `{english-word}`
+  >GET - `/api/words/from-english/` `{english-word}`
+    - returns
+        ```json
+        "names": [
+            "Option 1",
+            "Option 2",
+            "Option 3",
+        ]
+        ```
+<br>
+
+- Get all the silamena words'names that have a specific etymology
+  >GET - `/api/words/from-etymology/` `{etymology}`
+    - returns
+        ```json
+        "names": [
+            "Option 1",
+            "Option 2",
+            "Option 3",
+        ]
+        ```
+<br>
+
+- Get all the silamena words'names that have specific tag
+  >GET - `/api/words/from-tag/` `{tag}`
     - returns
         ```json
         "names": [
