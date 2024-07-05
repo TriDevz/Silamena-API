@@ -96,8 +96,8 @@ router.get('/words/all-english', async (req, res) => {
 });
 
 //Get all the silamena words given an english one
-router.get('/words/from_english/:inputWord', async (req, res) => {
-    const inputWord = req.params.inputWord.toLowerCase().replace("_", " ");
+router.get('/words/from-english/:inputWord', async (req, res) => {
+    const inputWord = req.params.inputWord.toLowerCase().replaceAll("_", " ");
 
     try {
         const silamenaWords = await model.Word.findAll({
@@ -129,6 +129,59 @@ router.get('/words/from_english/:inputWord', async (req, res) => {
     }
 });
 
+//Get all the silamena words given etymology
+router.get('/words/from-etymology/:inputWord', async (req, res) => {
+    const inputWord = req.params.inputWord.toLowerCase().replaceAll("_", " ");
+
+    try {
+        const silamenaWords = await model.Word.findAll({
+            where: {
+                etymology: {
+                    [Sequelize.Op.or]: [
+                        {[Sequelize.Op.eq]: inputWord},
+                        {[Sequelize.Op.startsWith]: `${inputWord} %`},
+                        {[Sequelize.Op.endsWith]: `% ${inputWord}`},
+                        {[Sequelize.Op.like]: `% ${inputWord} %`},
+                    ]
+                }
+            },
+            attributes: ['name']
+        });
+        const data = {
+            names: silamenaWords.map(word => word.name)
+        }
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error retrieving silamena words');
+    }
+});
+
+//Get all the silamena words given tag (#tag)
+router.get('/words/from-tag/:inputWord', async (req, res) => {
+    const inputWord = req.params.inputWord.toLowerCase().replaceAll("_", " ");
+
+    try {
+        const silamenaWords = await model.Word.findAll({
+            where: {
+                description: {
+                    [Sequelize.Op.or]: [
+                        {[Sequelize.Op.like]: `%#${inputWord}#%`},
+                    ]
+                }
+            },
+            attributes: ['name']
+        });
+        const data = {
+            names: silamenaWords.map(word => word.name)
+        }
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error retrieving silamena words');
+    }
+});
+
 //Create word
 router.post('/words/new', (req, res) => {
     if(req.body.name) {
@@ -144,7 +197,7 @@ router.post('/words/new', (req, res) => {
         res.status(201).end(jsonContent);
     } else {
         res.status(400).send("The name is missing");
-    }    
+    }
 });
 
 //Delete word
