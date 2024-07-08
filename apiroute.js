@@ -117,10 +117,9 @@ router.get('/words/from-english/:inputWord', async (req, res) => {
                     ]
                 }
             },
-            attributes: ['name']
         });
         const data = {
-            names: silamenaWords.map(word => word.name)
+            data: silamenaWords
         }
         res.json(data);
     } catch (error) {
@@ -145,10 +144,9 @@ router.get('/words/from-etymology/:inputWord', async (req, res) => {
                     ]
                 }
             },
-            attributes: ['name']
         });
         const data = {
-            names: silamenaWords.map(word => word.name)
+            data: silamenaWords
         }
         res.json(data);
     } catch (error) {
@@ -170,10 +168,9 @@ router.get('/words/from-tag/:inputWord', async (req, res) => {
                     ]
                 }
             },
-            attributes: ['name']
         });
         const data = {
-            names: silamenaWords.map(word => word.name)
+            data: silamenaWords
         }
         res.json(data);
     } catch (error) {
