@@ -186,9 +186,9 @@ router.post('/words/new', (req, res) => {
         tempword.name = req.body.name.toLowerCase();
         tempword.role = req.body.role;
         tempword.english = req.body.english.toLowerCase();
-        tempword.etymology = req.body.etymology.toLowerCase();
+        tempword.etymology = req.body.etymology;
         tempword.description = req.body.description;
-        tempword.synonyms = req.body.synonyms.toLowerCase();
+        tempword.synonyms = req.body.synonyms;
         model.dbaddWord(tempword);
         const jsonContent = JSON.stringify(tempword);
         res.status(201).end(jsonContent);
@@ -224,10 +224,10 @@ router.put('/words/:name',  (req, res) => {
             return res.status(404).send('Word not found');
         }
         word.role = req.body.role;
-        word.english = req.body.english.toLowerCase();
-        word.etymology = req.body.etymology.toLowerCase();
+        word.english = req.body.english;
+        word.etymology = req.body.etymology;
         word.description = req.body.description;
-        word.synonyms = req.body.synonyms.toLowerCase();
+        word.synonyms = req.body.synonyms;
         return word.save();
     }).then(() => {
         res.status(202).send('Word updated successfully');
@@ -266,7 +266,12 @@ router.get('/examples/:expression', async (req, res) => {
         const expressions = await model.Example.findAll({
             where: {
                 silamena: {
-                    [Sequelize.Op.like]: `%${expr}%`
+                    [Sequelize.Op.or]: [
+                        {[Sequelize.Op.eq]: expr},
+                        {[Sequelize.Op.startsWith]: `${expr} %`},
+                        {[Sequelize.Op.endsWith]: `% ${expr}`},
+                        {[Sequelize.Op.like]: `% ${expr} %`},
+                    ]
                 }
             },
         });
