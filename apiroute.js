@@ -14,6 +14,16 @@ var corsOptions = {
 }
 router.use(cors())
 
+async function isThereName(name) {
+    try {
+        const word = await model.Word.findOne({ where: { name } });
+        return word !== null;
+    } catch (error) {
+        console.error('Error checking if user name exists:', error);
+        throw error;
+    }
+}
+
 //WORDS
 
 //Word info
@@ -180,18 +190,23 @@ router.get('/words/from-tag/:inputWord', async (req, res) => {
 });
 
 //Create word
-router.post('/words/new', (req, res) => {
+router.post('/words/new', async (req, res) => {
     if(req.body.name) {
         let tempword = model.newWord();
         tempword.name = req.body.name.toLowerCase();
         tempword.role = req.body.role;
         tempword.english = req.body.english.toLowerCase();
-        tempword.etymology = req.body.etymology;
+        tempword.etymology = req.body.etymology.toLowerCase();
         tempword.description = req.body.description;
-        tempword.synonyms = req.body.synonyms;
-        model.dbaddWord(tempword);
-        const jsonContent = JSON.stringify(tempword);
-        res.status(201).end(jsonContent);
+        tempword.synonyms = req.body.synonyms.toLowerCase();
+        let check = await isThereName(req.body.name);
+        if(!check) {
+            model.dbaddWord(tempword);
+            const jsonContent = JSON.stringify(tempword);
+            res.status(201).end(jsonContent);
+        } else {
+            res.status(400).send("This name already exists")
+        }
     } else {
         res.status(400).send("The name is missing");
     }
@@ -224,10 +239,10 @@ router.put('/words/:name',  (req, res) => {
             return res.status(404).send('Word not found');
         }
         word.role = req.body.role;
-        word.english = req.body.english;
-        word.etymology = req.body.etymology;
+        word.english = req.body.english.toLowerCase();
+        word.etymology = req.body.etymology.toLowerCase();
         word.description = req.body.description;
-        word.synonyms = req.body.synonyms;
+        word.synonyms = req.body.synonyms.toLowerCase();
         return word.save();
     }).then(() => {
         res.status(202).send('Word updated successfully');
@@ -266,12 +281,7 @@ router.get('/examples/:expression', async (req, res) => {
         const expressions = await model.Example.findAll({
             where: {
                 silamena: {
-                    [Sequelize.Op.or]: [
-                        {[Sequelize.Op.eq]: expr},
-                        {[Sequelize.Op.startsWith]: `${expr} %`},
-                        {[Sequelize.Op.endsWith]: `% ${expr}`},
-                        {[Sequelize.Op.like]: `% ${expr} %`},
-                    ]
+                    [Sequelize.Op.like]: `%${expr}%`
                 }
             },
         });
