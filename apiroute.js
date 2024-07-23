@@ -258,6 +258,21 @@ router.get('/examples/random', async (req, res) => {
     }
 });
 
+//Retrieves all examples
+router.get('/examples/all', async (req, res) => {
+    try {
+        const examplesCount = await model.Example.count();
+        const examplesData = await model.Example.findAll();
+        const data = {
+            examples: examplesData,
+            count: examplesCount
+        }
+        res.json(data);
+    } catch (error) {
+        res.status(500).send('Error retrieving examples list', error);
+    }
+});
+
 //Finds 3 expression
 router.get('/examples/:expression', async (req, res) => {
     const expr = req.params.expression.toLowerCase().replace("_", " ");
@@ -283,21 +298,6 @@ router.get('/examples/:expression', async (req, res) => {
         res.json(data);
     } catch(error) {
         res.status(500).send("Error retrieving the expressions:", error);
-    }
-});
-
-//Retrieves all examples
-router.get('/examples/all', async (req, res) => {
-    try {
-        const examplesCount = await model.Example.count();
-        const examples = await model.Example.findAll();
-        const data = {
-            examples: examples,
-            count: examplesCount
-        }
-        res.json(data);
-    } catch (error) {
-        res.status(500).send('Error retrieving examples list', error);
     }
 });
 
