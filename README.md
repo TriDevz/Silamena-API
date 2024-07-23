@@ -206,6 +206,24 @@ ___
 # EXAMPLES
 
 ## Get requests
+
+- Get a all the examples data
+  >GET - `/api/examples/all`
+
+    - returns
+        ```json
+        "examples": [
+            {
+                "id": 1,
+                "silamena": "Random text",
+                "english": "English translation"
+            }
+        ],
+        "count": 1
+        ```
+
+<br>
+
 - Get a _num_ of random examples (**num is by default 1**)
   >GET - `/api/examples/random` `{?num=num}`
 
