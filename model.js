@@ -1,12 +1,26 @@
 /* MODEL */
 
-const { Sequelize, DataTypes } = require('sequelize');
 const sqlite3 = require('sqlite3').verbose();
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'db.sqlite'
+const { Sequelize, DataTypes } = require('sequelize');
+
+const sequelize = new Sequelize('postgres://koyeb-adm:pb6kIcx4YUAa@ep-misty-wave-a25miukz.eu-central-1.pg.koyeb.app/koyebdb', {
+  dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true, // This will enforce SSL
+      rejectUnauthorized: false // You might need this to avoid SSL certificate validation errors
+    }
+  }
 });
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 function Init() {
     try {
