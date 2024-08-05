@@ -48,10 +48,16 @@ router.post('/words/data', async (req, res) => {
             },
           },
         });
-        const data = {
-            data: words
-        }
-        res.json(data);
+        // Create a map for quick lookup of words by their names
+        const wordsMap = words.reduce((acc, word) => {
+            acc[word.name] = word;
+            return acc;
+        }, {});
+
+        // Create the sorted output
+        const sortedWords = list.map(name => wordsMap[name]);
+
+        res.json({ data: sortedWords });
     } catch (error) {
         res.status(500).send('Error retrieving words list', error);
     }
