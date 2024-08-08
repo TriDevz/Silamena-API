@@ -36,6 +36,30 @@ router.get('/words/names', async (req, res) => {
     }
 });
 
+
+router.get('/words/last', async (req, res) => {
+    const amount = req.query.amount || 1;
+
+    try {
+        const last = await model.Word.findAll({
+            limit: amount,
+            order: [['createdAt', 'DESC']]
+        })
+
+        const data = {
+            data: last
+        }
+        res.json(data);
+    } catch (error) {
+        res.status(500).send('Error retrieving word list', error);
+    }
+
+
+
+
+    
+});
+
 //Get array of words relative to the array of given names
 router.post('/words/data', async (req, res) => {
     const list = req.body.names || [];
