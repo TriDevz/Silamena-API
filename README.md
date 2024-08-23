@@ -98,11 +98,44 @@ ___
         ```
 <br>
 
-- Check if an english word can have a silamena translation
-  >GET - `/api/words/english_exists/` `{english-word}`
-    - returns
+- Get the last added words (default 1)
+  >GET - `/api/words/last` `{?amount=amount}`
+    - returns:
         ```json
-        "exists": false
+        "data": [
+            {
+                "name": "Last",
+                "role": 1,
+                "english": "translation",
+                "etymology": "original/origin...",
+                "description": "This is the name's description...",
+                "synonyms": ""
+            },
+            {
+                "name": "Second last",
+                "role": 2,
+                "english": "translation",
+                "etymology": "original/origin...",
+                "description": "This is the name's description...",
+                "synonyms": ""
+            }
+        ]
+        ```
+<br>
+
+- Get the number of word additions in a certain time
+  >GET - `/api/recent-additions` `{?days=days}`
+    - returns:
+        ```json
+        "count": "count"
+        ```
+<br>
+
+- Get the number of words with a specific role
+  >GET - `/api/words/role-amount/:role`
+    - returns:
+        ```json
+        "count": "count"
         ```
 <br>
 
@@ -220,6 +253,16 @@ ___
             }
         ],
         "count": 1
+        ```
+
+<br>
+
+- Get the amount of examples
+  >GET - `/api/examples/amount`
+
+    - returns
+        ```json
+        "count": "count"
         ```
 
 <br>
