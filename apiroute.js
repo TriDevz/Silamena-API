@@ -52,12 +52,7 @@ router.get('/words/last', async (req, res) => {
         res.json(data);
     } catch (error) {
         res.status(500).send('Error retrieving word list', error);
-    }
-
-
-
-
-    
+    }    
 });
 
 //Get array of words relative to the array of given names
@@ -87,33 +82,6 @@ router.post('/words/data', async (req, res) => {
     }
 });
 
-//Is there a silamena translation
-router.get('/words/english_exists/:word', async (req, res) => {
-    const word = req.params.word.toLowerCase().replace('_', " ");
-    await model.Word.findOne({
-        where: {
-            english: {
-                [Sequelize.Op.or]: [
-                    {[Sequelize.Op.eq]: word},
-                    {[Sequelize.Op.startsWith]: `${word}, %`},
-                    {[Sequelize.Op.endsWith]: `%, ${word}`},
-                    {[Sequelize.Op.like]: `%, ${word}, %`},
-                    {[Sequelize.Op.startsWith]: `${word}/%`},
-                    {[Sequelize.Op.endsWith]: `%/${word}`},
-                    {[Sequelize.Op.like]: `%/${word}/%`},
-                    {[Sequelize.Op.like]: `%, ${word}/%`},
-                    {[Sequelize.Op.like]: `%/${word}, %`},
-                ]
-            }
-        }
-    }).then((row) => {
-        if(row) {
-            res.json({exists:true})
-        } else {
-            res.json({exists:false})
-        }
-    });
-});
 //Get words list in a page (names, roles and english)
 router.get('/words/all-english', async (req, res) => {
     try {
@@ -121,6 +89,30 @@ router.get('/words/all-english', async (req, res) => {
         res.json(words);
     } catch (error) {
         console.error(error);
+        res.status(500).send('Error fetching words');
+    }
+});
+
+//Counts the words created sine num days ago
+router.get('/words/recent-additions/', async (req, res) => {
+    const days = +req.query.days || 7;
+    try {
+        const ndaysago = new Date();
+        ndaysago.setDate(ndaysago.getDate() - days);
+        
+        const count = await model.Word.count({
+            where: {
+                createdAt: {
+                    [Sequelize.Op.gt]: ndaysago
+                }
+            }
+        });
+
+        const data = {
+            count: count
+        }
+        res.json(data);
+    } catch(error) {
         res.status(500).send('Error fetching words');
     }
 });
@@ -209,6 +201,24 @@ router.get('/words/from-tag/:inputWord', async (req, res) => {
     }
 });
 
+//Find number of words with a specific role
+router.get('/words/role-amount/:role', async (req, res) => {
+    const role = req.params.role;
+
+    try {
+        const count = await model.Word.count({
+            where: {role: role}
+        });
+        const data = {
+            count: count
+        }
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error retrieving silamena words');
+    }
+});
+
 //Create word
 router.post('/words/new', (req, res) => {
     if(req.body.name) {
@@ -266,7 +276,7 @@ router.put('/words/:name',  (req, res) => {
     });
 });
 
-// EXAMPLES MANAHGER
+// EXAMPLES MANAGER
 
 //Get requests manager
 //Get random example
@@ -300,6 +310,18 @@ router.get('/examples/all', async (req, res) => {
         res.json(data);
     } catch (error) {
         res.status(500).send('Error retrieving examples list', error);
+    }
+});
+
+router.get('/examples/amount', async (req, res) => {
+    try {
+        const count = await model.Example.count();
+        const data = {
+            count: count
+        }
+        res.json(data);
+    } catch(error) {
+        res.status(500).send("Error retrieving the expressions:", error);
     }
 });
 
